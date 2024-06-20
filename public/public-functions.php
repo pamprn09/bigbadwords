@@ -6,7 +6,7 @@ function glossary_submission_form_shortcode() {
         <main id="main" class="site-main" role="main">
             <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
                 <header class="entry-header">
-                    <h1 class="entry-title"><?php _e( 'Submit New Term', 'glossary' ); ?></h1>
+                    <h1 class="entry-title"><?php _e( 'Submit New Term', 'collaborative-glossary' ); ?></h1>
                 </header><!-- .entry-header -->
 
                 <div class="entry-content">
@@ -14,16 +14,16 @@ function glossary_submission_form_shortcode() {
                         <input type="hidden" name="action" value="submit_new_term">
                         <input type="hidden" name="nonce" value="<?php echo wp_create_nonce( 'submit_new_term_nonce' ); ?>">
                         <p>
-                            <label for="termo"><?php _e( 'Term:', 'glossary' ); ?></label><br>
+                            <label for="termo"><?php _e( 'Term:', 'collaborative-glossary' ); ?></label><br>
                             <input type="text" name="termo" id="termo" required>
                         </p>
                         <p>
-                            <label for="definicao"><?php _e( 'Definition:', 'glossary' ); ?></label><br>
+                            <label for="definicao"><?php _e( 'Definition:', 'collaborative-glossary' ); ?></label><br>
                             <textarea name="definicao" id="definicao" required></textarea>
                         </p>
                         <!-- Add additional fields as necessary (e.g., related terms and relevant links) -->
                         <p>
-                            <input type="submit" value="<?php _e( 'Submit', 'glossary' ); ?>">
+                            <input type="submit" value="<?php _e( 'Submit', 'collaborative-glossary' ); ?>">
                         </p>
                     </form>
                 </div><!-- .entry-content -->

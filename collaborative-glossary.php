@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Glossary Plugin
+Plugin Name: Collaborative Glossary Plugin
 Description: A collaborative glossary plugin.
 Version: 1.0
 Author: Pamela Ribeiro
 Author URI: pamelaribeiro.dev.br
-Text Domain: glossary
+Text Domain: collaborative glossary
 Domain Path: /languages
 */
 
@@ -15,10 +15,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Load plugin text domain for translations
-function glossary_load_textdomain() {
-    load_plugin_textdomain( 'glossary', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+function collaborative_glossary_load_textdomain() {
+    load_plugin_textdomain( 'collaborative-glossary', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
-add_action( 'plugins_loaded', 'glossary_load_textdomain' );
+add_action( 'plugins_loaded', 'collaborative_glossary_load_textdomain' );
 
 // Include required files
 require_once plugin_dir_path( __FILE__ ) . 'inc/functions.php';
@@ -33,7 +33,7 @@ if ( is_admin() ) {
 require_once plugin_dir_path( __FILE__ ) . 'public/public-functions.php';
 
 function ygp_load_textdomain() {
-    load_plugin_textdomain( 'glossary', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+    load_plugin_textdomain( 'collaborative-glossary', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
-add_action( 'plugins_loaded', 'glossary_load_textdomain' );
+add_action( 'plugins_loaded', 'collaborative_glossary_load_textdomain' );
 

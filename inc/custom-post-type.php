@@ -1,18 +1,18 @@
 <?php
-function glossary_register_custom_post_type() {
+function collaborative_glossary_register_custom_post_type() {
     $labels = array(
-        'name'               => __( 'Terms', 'glossary' ),
-        'singular_name'      => __( 'Term', 'glossary' ),
-        'add_new'            => __( 'Add New Term', 'glossary' ),
-        'add_new_item'       => __( 'Add New Term', 'glossary' ),
-        'edit_item'          => __( 'Edit Term', 'glossary' ),
-        'new_item'           => __( 'New Term', 'glossary' ),
-        'all_items'          => __( 'All Terms', 'glossary' ),
-        'view_item'          => __( 'View Term', 'glossary' ),
-        'search_items'       => __( 'Search Terms', 'glossary' ),
-        'not_found'          => __( 'No terms found', 'glossary' ),
-        'not_found_in_trash' => __( 'No terms found in Trash', 'glossary' ),
-        'menu_name'          => __( 'Glossary', 'glossary' ),
+        'name'               => __( 'Terms', 'collaborative-glossary' ),
+        'singular_name'      => __( 'Term', 'collaborative-glossary' ),
+        'add_new'            => __( 'Add New Term', 'collaborative-glossary' ),
+        'add_new_item'       => __( 'Add New Term', 'collaborative-glossary' ),
+        'edit_item'          => __( 'Edit Term', 'collaborative-glossary' ),
+        'new_item'           => __( 'New Term', 'collaborative-glossary' ),
+        'all_items'          => __( 'All Terms', 'collaborative-glossary' ),
+        'view_item'          => __( 'View Term', 'collaborative-glossary' ),
+        'search_items'       => __( 'Search Terms', 'collaborative-glossary' ),
+        'not_found'          => __( 'No terms found', 'collaborative-glossary' ),
+        'not_found_in_trash' => __( 'No terms found in Trash', 'collaborative-glossary' ),
+        'menu_name'          => __( 'collaborative-glossary', 'collaborative-glossary' ),
     );
 
     $args = array(
@@ -32,4 +32,4 @@ function glossary_register_custom_post_type() {
 
     register_post_type( 'term', $args );
 }
-add_action( 'init', 'glossary_register_custom_post_type' );
+add_action( 'init', 'collaborative_glossary_register_custom_post_type' );
