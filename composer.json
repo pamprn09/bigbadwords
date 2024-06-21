@@ -1,0 +1,13 @@
+{
+    "name": "pamprn09/collaborative-glossary",
+    "description": "A collaborative glossary plugin for WordPress",
+    "type": "wordpress-plugin",
+    "require": {
+        "php": ">=7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pamprn09\\CollaborativeGlossary\\": "src/"
+        }
+    }
+}
