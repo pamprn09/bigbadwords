@@ -1,39 +1,56 @@
 <?php
-/*
-Plugin Name: Collaborative Glossary Plugin
-Description: A collaborative glossary plugin.
-Version: 1.0
-Author: Pamela Ribeiro
-Author URI: pamelaribeiro.dev.br
-Text Domain: collaborative glossary
-Domain Path: /languages
-*/
+/**
+ * Plugin Name: Collaborative Glossary
+ * Plugin URI: https://pamelaribeiro.dev.br/collaborative-glossary
+ * Description: A collaborative glossary plugin allowing users to submit and manage glossary terms.
+ * Version: 1.0.0
+ * Author: Pamela Ribeiro
+ * Author URI: https://pamelaribeiro.dev.br
+ * Text Domain: collaborative-glossary
+ * Domain Path: /languages
+ */
 
-// Exit if accessed directly.
-if ( ! defined( 'ABSPATH' ) ) {
-    exit;
+if ( ! defined( 'WPINC' ) ) {
+    die;
 }
 
-// Load plugin text domain for translations
-function collaborative_glossary_load_textdomain() {
-    load_plugin_textdomain( 'collaborative-glossary', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}
-add_action( 'plugins_loaded', 'collaborative_glossary_load_textdomain' );
+/**
+ * Currently plugin version.
+ */
+define( 'COLLABORATIVE_GLOSSARY_VERSION', '1.0.0' );
 
-// Include required files
-require_once plugin_dir_path( __FILE__ ) . 'inc/functions.php';
-require_once plugin_dir_path( __FILE__ ) . 'inc/custom-post-type.php';
-
-// Admin-specific files
-if ( is_admin() ) {
-    require_once plugin_dir_path( __FILE__ ) . 'admin/admin-page.php';
+/**
+ * The code that runs during plugin activation.
+ */
+function activate_collaborative_glossary() {
+    require_once plugin_dir_path( __FILE__ ) . 'includes/class-collaborative-glossary-activator.php';
+    Collaborative_Glossary_Activator::activate();
 }
 
-// Public-specific files
-require_once plugin_dir_path( __FILE__ ) . 'public/public-functions.php';
-
-function ygp_load_textdomain() {
-    load_plugin_textdomain( 'collaborative-glossary', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+/**
+ * The code that runs during plugin deactivation.
+ */
+function deactivate_collaborative_glossary() {
+    require_once plugin_dir_path( __FILE__ ) . 'includes/class-collaborative-glossary-deactivator.php';
+    Collaborative_Glossary_Deactivator::deactivate();
 }
-add_action( 'plugins_loaded', 'collaborative_glossary_load_textdomain' );
 
+register_activation_hook( __FILE__, 'activate_collaborative_glossary' );
+register_deactivation_hook( __FILE__, 'deactivate_collaborative_glossary' );
+
+/**
+ * The core plugin class that is used to define internationalization,
+ * admin-specific hooks, and public-facing site hooks.
+ */
+require plugin_dir_path( __FILE__ ) . 'includes/class-collaborative-glossary.php';
+
+/**
+ * Begins execution of the plugin.
+ */
+function run_collaborative_glossary() {
+    $plugin = new Collaborative_Glossary();
+    $plugin->run();
+}
+run_collaborative_glossary();
+
+?>
