@@ -39,6 +39,20 @@ register_activation_hook( __FILE__, 'activate_collaborative_glossary' );
 register_deactivation_hook( __FILE__, 'deactivate_collaborative_glossary' );
 
 /**
+ * Register custom template for 'glossary' custom post type.
+ */
+function collaborative_glossary_template_include($template) {
+    if (is_singular('glossary')) {
+        $glossary_template = plugin_dir_path(__FILE__) . '/single-glossary.php';
+        if ('' !== $glossary_template) {
+            return $glossary_template;
+        }
+    }
+    return $template;
+}
+add_filter('template_include', 'collaborative_glossary_template_include');
+
+/**
  * The core plugin class that is used to define internationalization,
  * admin-specific hooks, and public-facing site hooks.
  */

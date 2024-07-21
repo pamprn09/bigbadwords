@@ -18,8 +18,8 @@ if ( isset( $_POST['submit_term'] ) && wp_verify_nonce( $_POST['submit_term_nonc
     $new_term_args = array(
         'post_title'    => $term_title,
         'post_content'  => $term_definition,
-        'post_type'     => 'glossary', // Replace with your custom post type slug.
-        'post_status'   => 'pending', // Set initial status as pending for admin approval.
+        'post_type'     => 'glossary',
+        'post_status'   => 'pending',
     );
 
     $new_term_id = wp_insert_post( $new_term_args );
