@@ -76,7 +76,7 @@ class Collaborative_Glossary_Admin {
             'capability_type'       => 'post',
             'show_in_rest'          => true,
             'menu_icon'             => 'dashicons-book-alt',
-            'supports'              => array( 'title', 'editor' ),
+            'supports'              => array( 'title', 'editor', 'custom-fields' ),
         ];
         register_post_type( 'glossary', $args );
     }
@@ -86,15 +86,27 @@ class Collaborative_Glossary_Admin {
      *
      * @since    1.0.0
      */
-    public function enqueue_scripts() {
-        wp_enqueue_script(
-            $this->plugin_name,
-            plugin_dir_url( __FILE__ ) . 'js/collaborative-glossary-admin.js',
-            [ 'jquery' ],
-            $this->version,
-            false
-        );
+    public function enqueue_scripts($hook) {
+        // Enqueue jQuery UI Autocomplete for all admin pages
+        wp_enqueue_script( 'jquery-ui-autocomplete' );
+        
+        // Enqueue the main admin script for the plugin
+        wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/collaborative-glossary-admin.js', array( 'jquery', 'jquery-ui-autocomplete' ), $this->version, true );
+
+        // Localize script to pass the REST API URL
+        wp_localize_script( $this->plugin_name, 'collaborativeGlossary', array(
+            'restUrl' => esc_url_raw( rest_url( 'wp/v2/glossary' ) ),
+        ) );
+
+        // Enqueue additional scripts only for the glossary_term post type
+        if ('post.php' == $hook || 'post-new.php' == $hook) {
+            global $post_type;
+            if ('glossary' == $post_type) {
+                wp_enqueue_script('collaborative-glossary-limit-content', plugin_dir_url(__FILE__) . 'js/collaborative-glossary-limit-content.js', [ 'wp-data', 'wp-edit-post'], $this->version, true);
+            }
+        }
     }
+
 
     /**
      * Save post handler for the custom post type.
@@ -125,7 +137,7 @@ class Collaborative_Glossary_Admin {
         }
 
         // Sanitize and save data.
-        $fields = ['related_terms', 'relevant_links'];
+        $fields = ['related_terms'];
 
         foreach ( $fields as $field ) {
             if ( isset( $_POST[ $field ] ) ) {
@@ -139,13 +151,91 @@ class Collaborative_Glossary_Admin {
      */
     public function add_meta_boxes() {
         add_meta_box(
-            'related_terms_meta_box',
-            __( 'Related Terms', 'collaborative_glossary' ),
-            array( $this, 'render_related_terms_meta_box' ),
-            'term',
-            'side',
-            'default'
+            'collaborative_glossary_meta_box',
+            __( 'Glossary Term Details', 'collaborative-glossary' ),
+            [ $this, 'render_meta_box_content' ],
+            'glossary',
+            'advanced',
+            'high'
         );
+    }
+
+    /**
+     * Allow only paragraphs at the Glossary terms.
+     */
+    public function filter_allowed_block_types($allowed_blocks, $block_editor_context) {
+        if (!empty($block_editor_context->post) && $block_editor_context->post->post_type === 'glossary') {
+            return ['core/paragraph', 'core/notices'];
+        }
+        return $allowed_blocks;
+    }
+
+    /**
+     * Register allowed blocks.
+     */
+    public function register_allowed_block_types() {
+        add_filter('allowed_block_types_all', [$this, 'filter_allowed_block_types'], 10, 2);
+    }
+
+    /**
+     * Render meta box content method.
+     */ 
+    public function render_meta_box_content( $post ) {
+        wp_nonce_field( 'save_collaborative_glossary', 'collaborative_glossary_nonce' );
+    
+        $related_terms = get_post_meta( $post->ID, 'related_terms', true );
+        ?>
+        <p id="content-character-counter">Caracteres restantes: 300</p>
+        <p>
+            <label for="related_terms"><?php _e( 'Related Terms', 'collaborative-glossary' ); ?></label>
+            <input type="text" id="related_terms" name="related_terms" value="<?php echo esc_attr( $related_terms ); ?>" />
+        </p>
+    
+        <script>
+            jQuery(document).ready(function($) {
+                $('#related_terms').autocomplete({
+                    source: function(request, response) {
+                        $.ajax({
+                            url: collaborativeGlossary.restUrl,
+                            dataType: 'json',
+                            data: {
+                                search: request.term
+                            },
+                            success: function(data) {
+                                response($.map(data, function(item) {
+                                    return {
+                                        label: item.title.rendered,
+                                        value: item.id
+                                    };
+                                }));
+                            }
+                        });
+                    },
+                    minLength: 2,
+                    select: function(event, ui) {
+                        $('#related_terms').val(ui.item.label);
+                        return false;
+                    }
+                });
+            });
+        </script>
+        <?php
+    }
+    
+    
+
+    // Register Custom Field 'Author' for 'glossary' CPT
+    public function register_glossary_custom_fields() {
+        register_meta( 'post', 'glossary_author', array(
+            'show_in_rest' => true, // Make field available in REST API
+            'single' => true, // Allow only single value
+            'type' => 'string', // Data type (string, integer, etc.)
+            'description' => 'Author of the glossary term', // Field description
+            'sanitize_callback' => 'sanitize_text_field', // Sanitization function
+            'auth_callback' => function() {
+                return current_user_can( 'edit_posts' ); // Authorization callback
+            },
+        ) );
     }
 
     /**
