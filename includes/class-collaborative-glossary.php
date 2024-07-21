@@ -155,7 +155,8 @@ class Collaborative_Glossary {
 		$this->loader->add_action( 'init', $plugin_admin, 'register_cpt_glossary_term' );
 		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'add_meta_boxes' );
 		$this->loader->add_action( 'save_post_glossary_term', $plugin_admin, 'save_post' );
-
+        $this->loader->add_action( 'init', $plugin_admin,'register_glossary_custom_fields' );
+		$this->loader->add_filter( 'allowed_block_types_all', $plugin_admin, 'filter_allowed_block_types', 10, 2 );
 	}
 
 	/**
